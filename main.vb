@@ -488,8 +488,6 @@ beginLoop:
             If message.Substring(0, Len("ERROR :Closing Link:")) = "ERROR :Closing Link:" Then
                 servConnect()
                 runLoop()
-            Else
-                Exit Sub
             End If
         End If
     End Sub
