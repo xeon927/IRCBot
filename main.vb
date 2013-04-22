@@ -14,8 +14,6 @@ Module main
     Dim QuietStart As Boolean = False
     Dim nsUse As Boolean = False
     Dim gen As New Random
-    Private newPropertyValue As String
-
     Sub Main()
         checkStartFlags()
         XMLLoad()
@@ -198,6 +196,9 @@ beginLoop:
     End Sub
     Sub checkString(message As String)
         Try
+            'Check if disconnected
+            cmdCheckDisconnect(message)
+
             'Autorespond to PING messages
             If Len(message) > 6 Then
                 If message.Substring(0, 6) = "PING :" Then
@@ -479,6 +480,16 @@ beginLoop:
                 Dim min As Integer = Regex.Match(getMessage(message), "!dose\ (?<min>\d+)\ (?<max>\d+)", RegexOptions.IgnoreCase).Result("${min}")
                 Dim max As Integer = Regex.Match(getMessage(message), "!dose\ (?<min>\d+)\ (?<max>\d+)", RegexOptions.IgnoreCase).Result("${max}")
                 chanMessage(getChannel(message), String.Format("{0}: You should take {1}mg!", getNickname(message), numberGen(min, max).ToString()))
+            End If
+        End If
+    End Sub
+    Sub cmdCheckDisconnect(message As String)
+        If Len(message) > Len("ERROR :Closing Link:") Then
+            If message.Substring(0, Len("ERROR :Closing Link:")) = "ERROR :Closing Link:" Then
+                servConnect()
+                runLoop()
+            Else
+                Exit Sub
             End If
         End If
     End Sub
