@@ -14,6 +14,11 @@ Module main
     Dim QuietStart As Boolean = False
     Dim nsUse As Boolean = False
     Dim gen As New Random
+    Dim loggedIn As Boolean = False
+    Dim firstPing As Boolean = False
+    Dim nickSent As Boolean = False
+    Dim userSent As Boolean = False
+    Dim FirstRun As Boolean = True
     Sub Main()
         checkStartFlags()
         XMLLoad()
@@ -120,64 +125,55 @@ Module main
         Dim stream As NetworkStream = client.GetStream()
         Dim responseData As [String] = [String].Empty
         stream.ReadTimeout = 1000
-        Dim nickSent As Boolean = False
-        Dim userSent As Boolean = False
-        Dim loggedIn As Boolean = False
-        Dim FirstRun As Boolean = True
         Do
-beginLoop:
-            '---Reset Byte Buffer---
             Dim data As Byte()
-            data = New [Byte](65535) {}
-            responseData = String.Empty
+            data = New [Byte](0) {}
+            Dim out As String = String.Empty
+            Dim charIn As String = String.Empty
             Try
-                '---Receive Data---
-                Dim bytes As Int32 = stream.Read(data, 0, data.Length)
+                Do
+                    stream.Read(data, 0, 1)
+                    charIn = ASCII.GetString(data)
+                    If charIn = vbCrLf Or charIn = vbCr Or charIn = vbLf Then
+                        Console.Write("<<< " + out)
+                        checkString(out + vbCrLf)
+                        Exit Do
+                    End If
+                    out = out + charIn
+                Loop
 
-                'TODO: Make this work
-                'processBytes(bytes)
-
-                responseData = ASCII.GetString(data, 0, bytes)
-
-                '---Print Data
-                If Not responseData = "" Then
-                    Console.Write("<<< " + responseData)
-                End If
+                If loggedIn = False Then doLogin()
             Catch ex As Exception
                 'The following lines have been removed due to unnecessary spam. Sure, it might be needed, but probably not.
                 'Every time the server doesn't send anything, the connection times out, and an error is thrown. Just about every 10 seconds.
                 'Console.WriteLine("---No response from server---")
                 'Console.WriteLine(ex.ToString())
             End Try
-
-            checkString(responseData)
-
-            If loggedIn = False Then
-                If FirstRun = True Then
-                    FirstRun = False
-                    GoTo beginLoop
-                End If
-                If nickSent = False Then
-                    sendData(String.Format("NICK {0}", nickname.ToString()))
-                    nickSent = True
-                    GoTo beginLoop
-                End If
-                If userSent = False Then
-                    sendData(String.Format("USER {0} {1} {2} :{3}", username.ToString, "null", "null", realname.ToString()))
-                    userSent = True
-                    GoTo beginLoop
-                End If
-                If nsUse = True Then
-                    sendNickserv()
-                End If
-                joinChannel()
-                loggedIn = True
-                CanRegex = True
-            End If
         Loop
     End Sub
-    Sub processBytes(bytes As Int32)
-        'TODO: Make this work
+    Sub doLogin()
+        If FirstRun = True Then
+            FirstRun = False
+            Exit Sub
+        End If
+        If nickSent = False Then
+            sendData(String.Format("NICK {0}", nickname.ToString()))
+            nickSent = True
+            Exit Sub
+        End If
+        If firstPing = True Then
+            If userSent = False Then
+                sendData(String.Format("USER {0} {1} {2} :{3}", username.ToString, "null", "null", realname.ToString()))
+                userSent = True
+                Exit Sub
+            End If
+            If nsUse = True Then
+                sendNickServ()
+            End If
+            joinChannel()
+            loggedIn = True
+            CanRegex = True
+        End If
     End Sub
     Sub Pong(message As String)
         Dim pongMsg(1) As String
@@ -196,31 +192,26 @@ beginLoop:
     End Sub
     Sub checkString(message As String)
         Try
+            'Check for PING messages
+            cmdCheckPing(message)
+
             'Check if disconnected
             cmdCheckDisconnect(message)
 
-            'Autorespond to PING messages
-            If Len(message) > 6 Then
-                If message.Substring(0, 6) = "PING :" Then
-#If DEBUG Then
-                    Console.WriteLine("---Ping Found. Responding---")
-#End If
-                    Pong(message)
-                End If
+            If loggedIn = True Then
+                'Owner Only Functions
+                cmdShutDown(message)
+                cmdChangeNick(message)
+                cmdChangeOwner(message)
+                cmdJoinChan(message)
+                cmdPartChan(message)
+                cmdNickServ(message)
+
+                'Other Functions
+                cmdDiceRoll(message)
+                cmdGetOwner(message)
+                cmdGetDose(message)
             End If
-
-            'Owner Only Functions
-            cmdShutDown(message)
-            cmdChangeNick(message)
-            cmdChangeOwner(message)
-            cmdJoinChan(message)
-            cmdPartChan(message)
-            cmdNickServ(message)
-
-            'Other Functions
-            cmdDiceRoll(message)
-            cmdGetOwner(message)
-            cmdGetDose(message)
         Catch ex As Exception
             Console.WriteLine("---Something went wrong (Sub checkString)---")
 #If DEBUG Then
@@ -488,6 +479,18 @@ beginLoop:
             If message.Substring(0, Len("ERROR :Closing Link:")) = "ERROR :Closing Link:" Then
                 servConnect()
                 runLoop()
+            End If
+        End If
+    End Sub
+    Sub cmdCheckPing(message As String)
+        'Autorespond to PING messages
+        If Len(message) > 6 Then
+            If message.Substring(0, 6) = "PING :" Then
+#If DEBUG Then
+                Console.WriteLine("---Ping Found. Responding---")
+#End If
+                Pong(message)
+                If firstPing = False Then firstPing = True
             End If
         End If
     End Sub
