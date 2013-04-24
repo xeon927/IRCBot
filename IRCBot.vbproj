@@ -86,6 +86,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="chatStrings.vb" />
     <Compile Include="main.vb" />
     <Compile Include="Settings\AssemblyInfo.vb" />
     <Compile Include="Settings\Application.Designer.vb">
