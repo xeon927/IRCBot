@@ -134,9 +134,11 @@ Module main
                 Do
                     stream.Read(data, 0, 1)
                     charIn = ASCII.GetString(data)
-                    If charIn = vbCrLf Or charIn = vbCr Or charIn = vbLf Then
+                    If charIn = vbCr Then
+                        out = out + vbCrLf
                         Console.Write("<<< " + out)
-                        checkString(out + vbCrLf)
+                        stream.Read(data, 0, 1)
+                        checkString(out)
                         Exit Do
                     End If
                     out = out + charIn
