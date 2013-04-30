@@ -22,6 +22,7 @@ Module chatStrings
                 cmdDiceRoll(message)
                 cmdGetOwner(message)
                 cmdGetDose(message)
+                cmdHug(message)
             End If
         Catch ex As Exception
             Console.WriteLine("---Something went wrong (Sub checkString)---")
@@ -213,6 +214,25 @@ Module chatStrings
                 Dim min As Integer = Regex.Match(getMessage(message), "!dose\ (?<min>\d+)\ (?<max>\d+)", RegexOptions.IgnoreCase).Result("${min}")
                 Dim max As Integer = Regex.Match(getMessage(message), "!dose\ (?<min>\d+)\ (?<max>\d+)", RegexOptions.IgnoreCase).Result("${max}")
                 chanMessage(getChannel(message), String.Format("{0}: You should take {1}mg!", getNickname(message), numberGen(min, max).ToString()))
+            End If
+        End If
+    End Sub
+    Sub cmdHug(message As String)
+        If InStr(message, String.Format("hugs {0}", nickname)) Then
+            If getNickname(message) = owner Then
+                Select Case numberGen(0, 3)
+                    Case 1
+                        chanMessage(getChannel(message), String.Format("{1}ACTION snuggles up to {0}{1}", getNickname(message), Chr(&H1)))
+                    Case 2
+                        chanMessage(getChannel(message), String.Format("{1}ACTION cuddles {0}{1}", getNickname(message), Chr(&H1)))
+                    Case 3
+                        chanMessage(getChannel(message), String.Format("{1}ACTION hugs {0} in return{1}", getNickname(message), Chr(&H1)))
+                    Case Else
+                        chanMessage(getChannel(message), String.Format("{1}ACTION hugs {0}{1}", getNickname(message), Chr(&H1)))
+                        sendNotice(owner, "Something went wrong with cmdHug... :(")
+                End Select
+            Else
+                chanMessage(getChannel(message), String.Format("{0}: Aww... :)", getNickname(message)))
             End If
         End If
     End Sub
