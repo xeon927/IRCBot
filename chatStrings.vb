@@ -63,7 +63,7 @@ Module chatStrings
         Dim pongMsg(1) As String
         pongMsg = message.Split(":")
         pongMsg(1) = pongMsg(1).TrimEnd(vbCr, vbLf)
-        sendData("PONG " + pongMsg(1).ToString())
+        sendData("PONG :" + pongMsg(1).ToString())
     End Sub
 
     'Brain Modules
