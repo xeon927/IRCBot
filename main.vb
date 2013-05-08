@@ -5,9 +5,9 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
-    Public version As String = "1.4.1"
+    Public version As String = "1.4.2"
     Public host, port, channel, nickname, username, realname, owner, ownerfail, nsPass As String
-    Public settingsFile As String = String.Format("{0}/settings.xml", Directory.GetCurrentDirectory())
+    Public settingsFile As String = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml")
     Dim client As TcpClient
     'Dim data As [Byte]()
     Dim ReadBuf As String = ""
