@@ -23,6 +23,7 @@ Module chatStrings
                 cmdGetOwner(message)
                 cmdGetDose(message)
                 cmdHug(message)
+                cmdVersion(message)
             End If
         Catch ex As Exception
             Console.WriteLine("---Something went wrong (Sub checkString)---")
@@ -234,6 +235,11 @@ Module chatStrings
             Else
                 chanMessage(getChannel(message), String.Format("{0}: Aww... :)", getNickname(message)))
             End If
+        End If
+    End Sub
+    Sub cmdVersion(message As String)
+        If InStr(message.ToLower(), String.Format("{0}: Version", nickname).ToLower()) Then
+            chanMessage(getChannel(message), String.Format("I am running version {0} of xeon927's IRC Bot", version))
         End If
     End Sub
 End Module

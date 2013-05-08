@@ -5,6 +5,7 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
+    Public version As String = "1.4.0"
     Public host, port, channel, nickname, username, realname, owner, ownerfail, nsPass As String
     Public settingsFile As String = String.Format("{0}/settings.xml", Directory.GetCurrentDirectory())
     Dim client As TcpClient
