@@ -10,6 +10,7 @@ Module chatStrings
             cmdCheckDisconnect(message)
 
             If main.loggedIn = True Then
+                cmdCheckHighlight(message)
                 'Owner Only Functions
                 cmdShutDown(message)
                 cmdChangeNick(message)
@@ -21,7 +22,7 @@ Module chatStrings
 
                 'Other Functions
                 cmdDiceRoll(message)
-                cmdGetOwner(message)
+                'cmdGetOwner(message)
                 cmdGetDose(message)
                 cmdHug(message)
                 cmdVersion(message)
@@ -66,6 +67,44 @@ Module chatStrings
         pongMsg = message.Split(":")
         pongMsg(1) = pongMsg(1).TrimEnd(vbCr, vbLf)
         sendData("PONG :" + pongMsg(1).ToString())
+    End Sub
+
+    Sub cmdCheckHighlight(message As String)
+        If Regex.IsMatch(getMessage(message), "\w+: \w+ .+", RegexOptions.IgnoreCase) Then
+#If DEBUG Then
+            Console.WriteLine("---Got match for (nickname: argument instruction)---")
+#End If
+            Dim fromNick, fromChan, nick, inst, arg As String
+            Dim pattern As String = "(?<nickname>\w+): (?<instruction>\w+) (?<argument>.+)"
+            fromNick = getNickname(message)
+            fromChan = getChannel(message)
+            nick = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${nickname}")
+            inst = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${instruction}")
+            arg = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${argument}")
+            cmdRunHighlight(fromNick, fromChan, inst, arg)
+        End If
+        If Regex.IsMatch(getMessage(message), "\w+: \w+", RegexOptions.IgnoreCase) Then
+#If DEBUG Then
+            Console.WriteLine("---Got match for (nickname: argument)---")
+#End If
+            Dim fromNick, fromChan, nick, inst As String
+            Dim pattern As String = "(?<nickname>\w+): (?<instruction>\w+)"
+            fromNick = getNickname(message)
+            fromChan = getChannel(message)
+            nick = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${nickname}")
+            inst = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${instruction}")
+            cmdRunHighlight(fromNick, fromChan, inst.ToLower())
+        End If
+    End Sub
+    Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String)
+        Select Case instruction
+            Case "ownerinfo" : cmdGetOwner(fromChan)
+        End Select
+    End Sub
+    Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String, arguments As String)
+        Select Case instruction
+
+        End Select
     End Sub
 
     'Brain Modules
@@ -220,11 +259,12 @@ Module chatStrings
             End If
         End If
     End Sub
-    Sub cmdGetOwner(message As String)
+    Sub cmdGetOwner(fromChan As String)
         'Return owner info if requested
-        If InStr(message.ToLower(), String.Format("{0}: Ownerinfo", nickname).ToLower()) Then
-            chanMessage(getChannel(message), String.Format("{0} is my owner!", owner))
-        End If
+        chanMessage(fromChan, String.Format("{0} is my owner!", owner))
+        'If InStr(message.ToLower(), String.Format("{0}: Ownerinfo", nickname).ToLower()) Then
+        '    chanMessage(getChannel(message), String.Format("{0} is my owner!", owner))
+        'End If
     End Sub
     Sub cmdGetDose(message As String)
         If CanRegex Then
