@@ -18,7 +18,10 @@ Module WriteSampleConfig
                                       New XElement("password", "password")),
                          New XElement("misc",
                                       New XElement("ownerfail", "Sorry, only my owner can make me do that."),
-                                      New XElement("alwaysQuiet", "False"))))
+                                      New XElement("alwaysQuiet", "False")),
+                         New XElement("diceroll",
+                                      New XElement("diceMaxRolls", "75"),
+                                      New XElement("diceMaxSides", "500"))))
         defaultConfig.Save(main.settingsFile)
     End Sub
     Sub genNew()

@@ -19,6 +19,7 @@ Module main
     Public nickSent As Boolean = False
     Public userSent As Boolean = False
     Public FirstRun As Boolean = True
+    Public diceMaxRolls, diceMaxSides As Integer
     Sub Main()
         checkStartFlags()
         XMLLoad()
@@ -46,6 +47,18 @@ Module main
         'NickServ Settings
         If xmlDoc.<settings>.<nickserv>.<useNickServ>.Value = "True" Then nsUse = True
         nsPass = xmlDoc.<settings>.<nickserv>.<password>.Value
+
+        'Diceroll Settings
+        diceMaxRolls = xmlDoc.<settings>.<diceroll>.<diceMaxRolls>.Value
+        diceMaxSides = xmlDoc.<settings>.<diceroll>.<diceMaxSides>.Value
+        If diceMaxRolls > 75 Then
+            Console.WriteLine("[WARN] settings.diceroll.diceMaxRolls is greater than 75. Defaulting to 75.")
+            diceMaxRolls = 75
+        End If
+        If diceMaxSides = 1 Then
+            Console.WriteLine("[WARN] settings.diceroll.diceMaxSides must be more than 1. Defaulting to 500.")
+            diceMaxSides = 500
+        End If
 
         'Miscellaneous Settings
         ownerfail = xmlDoc.<settings>.<misc>.<ownerfail>.Value

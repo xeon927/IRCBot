@@ -168,18 +168,18 @@ Module chatStrings
 #If DEBUG Then
                 Console.WriteLine("Checking number limits")
 #End If
-                If rolls > 100 Or max > 500 Then
+                If rolls > diceMaxRolls Or max > diceMaxSides Then
 #If DEBUG Then
                     Console.WriteLine(String.Format("{0} of {1} tried to roll {2} times with a max of {3} chances. Stopping roll.", getNickname(message), getChannel(message), rolls.ToString(), max.ToString()))
 #End If
-                    chanMessage(getChannel(message), String.Format("{0}: Sorry, but I can't work with numbers that large. I only support up to 100 rolls at a time, each roll generating numbers 1 - 500", getNickname(message)))
+                    chanMessage(getChannel(message), String.Format("{0}: Sorry, but I can't work with numbers that large. I only support up to {1} rolls at a time, each roll generating numbers 1 - {2}", getNickname(message), diceMaxRolls, diceMaxSides))
                     Exit Sub
                 End If
                 If rolls = 0 Or max = 0 Then
 #If DEBUG Then
                     Console.WriteLine(String.Format("{0} of {1} tried to roll {2} times with a max of {3} chances. Stopping roll.", getNickname(message), getChannel(message), rolls.ToString(), max.ToString()))
 #End If
-                    chanMessage(getChannel(message), String.Format("{0}: Sorry, but I can't make a diceroll with 0 numbers or chances.", getNickname(message)))
+                    chanMessage(getChannel(message), String.Format("{0}: Sorry, but I can't make a diceroll with 0 rolls or chances.", getNickname(message)))
                     Exit Sub
                 End If
                 If max = 1 Then
