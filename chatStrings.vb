@@ -17,6 +17,7 @@ Module chatStrings
                 cmdJoinChan(message)
                 cmdPartChan(message)
                 cmdNickServ(message)
+                cmdGetVar(message)
 
                 'Other Functions
                 cmdDiceRoll(message)
@@ -153,6 +154,22 @@ Module chatStrings
                 sendNickServ()
             Else
                 chanMessage(getChannel(message), ownerfail)
+            End If
+        End If
+    End Sub
+    Sub cmdGetVar(message As String)
+        If InStr(message.ToLower(), String.Format("{0}: getVar", nickname).ToLower()) Then
+            If getNickname(message) = owner Then
+                Dim var As String
+                Dim start As Integer
+                start = Len(nickname) + Len(": getVar ")
+                var = getMessage(message)
+                var = var.Substring(start, Len(getMessage(message)) - start - 1)
+                Select Case var.ToString()
+                    Case "settingsFile" : chanMessage(getChannel(message), settingsFile)
+                    Case "diceMaxRolls" : chanMessage(getChannel(message), diceMaxRolls)
+                    Case "diceMaxSides" : chanMessage(getChannel(message), diceMaxSides)
+                End Select
             End If
         End If
     End Sub
