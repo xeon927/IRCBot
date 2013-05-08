@@ -1,0 +1,20 @@
+v1.3.0
+    - Added variable dicerolling
+
+
+v1.2.3
+    - Added cmdHug()
+v1.2.2
+    - Moved chat modules to separate file
+v1.2.1
+    - Fixed bug with data arrival method
+v1.2.0
+    - Data arrival method rewritten
+
+
+v1.1.0
+    - Added automatic reconnection on disconnect
+
+
+v1.0.0
+    - Initial Release
