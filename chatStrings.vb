@@ -13,11 +13,6 @@ Module chatStrings
                 cmdCheckHighlight(message)
                 'Owner Only Functions
                 cmdShutDown(message)
-                'cmdChangeNick(message)
-                cmdChangeOwner(message)
-                cmdJoinChan(message)
-                cmdPartChan(message)
-                cmdNickServ(message)
 
                 'Other Functions
                 cmdDiceRoll(message)
@@ -68,12 +63,12 @@ Module chatStrings
 
     'Highlight Handling
     Sub cmdCheckHighlight(message As String)
-        If Regex.IsMatch(getMessage(message), "\w+: \w+ .+", RegexOptions.IgnoreCase) Then
+        If Regex.IsMatch(getMessage(message), "\w+: \w+ [A-Za-z0-9#]+", RegexOptions.IgnoreCase) Then
 #If DEBUG Then
             Console.WriteLine("---Got match for (nickname: argument instruction)---")
 #End If
             Dim fromNick, fromChan, nick, inst, arg As String
-            Dim pattern As String = "(?<nickname>\w+): (?<instruction>\w+) (?<argument>.+)"
+            Dim pattern As String = "(?<nickname>\w+): (?<instruction>\w+) (?<argument>[A-Za-z0-9#]+)"
             fromNick = getNickname(message)
             fromChan = getChannel(message)
             nick = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${nickname}")
@@ -99,7 +94,7 @@ Module chatStrings
         Select Case instruction
             Case "ownerinfo" : cmdGetOwner(fromNick, fromChan)
             Case "version" : cmdVersion(fromNick, fromChan)
-
+            Case "identify" : cmdNickServ(fromNick, fromChan)
         End Select
     End Sub
     Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String, arguments As String)
@@ -107,6 +102,10 @@ Module chatStrings
         Select Case instruction
             Case "getvar" : cmdGetVar(fromNick, fromChan, arguments)
             Case "changenick" : cmdChangeNick(fromNick, fromChan, arguments)
+            Case "changeowner" : cmdChangeOwner(fromNick, fromChan, arguments)
+            Case "joinchan" : cmdJoinChan(fromNick, fromChan, arguments)
+            Case "partchan" : cmdPartChan(fromNick, fromChan, arguments)
+
         End Select
     End Sub
 
@@ -119,6 +118,13 @@ Module chatStrings
         chanMessage(fromChan, String.Format("{0}: I am running version {1} of xeon927's IRC Bot.", fromNick, version))
     End Sub
     'Owner-Only
+    Sub cmdNickServ(fromNick As String, fromChan As String)
+        If fromNick = owner Then
+            sendNickServ()
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
+    End Sub
     Sub cmdGetVar(fromNick As String, fromChan As String, arguments As String)
         If fromNick = owner Then
             If InStr(arguments, "settingsFile") Then chanMessage(fromChan, settingsFile)
@@ -133,6 +139,28 @@ Module chatStrings
             arguments = removeSpaces(arguments)
             sendData(String.Format("NICK {0}", arguments))
             nickname = arguments
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
+    End Sub
+    Sub cmdChangeOwner(fromNick As String, fromChan As String, arguments As String)
+        If fromNick = owner Then
+            owner = removeSpaces(arguments)
+            sendNotice(owner, "You are my new owner!")
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
+    End Sub
+    Sub cmdJoinChan(fromNick As String, fromChan As String, arguments As String)
+        If fromNick = owner Then
+            joinChan(arguments)
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
+    End Sub
+    Sub cmdPartChan(fromNick As String, fromChan As String, arguments As String)
+        If fromNick = owner Then
+            partChan(arguments)
         Else
             chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
         End If
@@ -153,64 +181,7 @@ Module chatStrings
             End If
         End If
     End Sub
-    Sub cmdChangeOwner(message As String)
-        'Change owner if requested by owner
-        If InStr(message.ToLower(), String.Format("{0}: Changeowner", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                Dim newowner As String
-                Dim start As Integer
-                start = Len(nickname) + Len(": Changeowner ")
-                newowner = getMessage(message)
-                newowner = newowner.Substring(start, Len(getMessage(message)) - start - 1)
-                owner = removeSpaces(newowner)
-                sendNotice(owner, "You are my new owner!")
-            Else
-                chanMessage(getChannel(message), ownerfail)
-            End If
-        End If
-    End Sub
-    Sub cmdJoinChan(message As String)
-        'Join channel if requested by owner
-        If InStr(message.ToLower(), String.Format("{0}: Joinchan", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                Dim newchan As String
-                Dim start As Integer
-                start = Len(nickname) + Len(": Joinchan ")
-                newchan = getMessage(message)
-                newchan = newchan.Substring(start, Len(getMessage(message)) - start - 1)
-                newchan = removeSpaces(newchan)
-                joinChan(newchan)
-            Else
-                chanMessage(getChannel(message), ownerfail)
-            End If
-        End If
-    End Sub
-    Sub cmdPartChan(message As String)
-        'Part channel if requested by owner
-        If InStr(message.ToLower(), String.Format("{0}: Partchan", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                Dim oldchan As String
-                Dim start As Integer
-                start = Len(nickname) + Len(": Partchan")
-                oldchan = getMessage(message)
-                oldchan = oldchan.Substring(start, Len(getMessage(message)) - start - 1)
-                oldchan = removeSpaces(oldchan)
-                partChan(oldchan)
-            Else
-                chanMessage(getChannel(message), ownerfail)
-            End If
-        End If
-    End Sub
-    Sub cmdNickServ(message As String)
-        'Identify with NickServ if requested by owner
-        If InStr(message.ToLower(), String.Format("{0}: Identify", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                sendNickServ()
-            Else
-                chanMessage(getChannel(message), ownerfail)
-            End If
-        End If
-    End Sub
+
     'Other Functions:
     Sub cmdDiceRoll(message As String)
         If CanRegex Then
