@@ -13,7 +13,7 @@ Module chatStrings
                 cmdCheckHighlight(message)
                 'Owner Only Functions
                 cmdShutDown(message)
-                cmdChangeNick(message)
+                'cmdChangeNick(message)
                 cmdChangeOwner(message)
                 cmdJoinChan(message)
                 cmdPartChan(message)
@@ -66,6 +66,7 @@ Module chatStrings
         sendData("PONG :" + pongMsg(1).ToString())
     End Sub
 
+    'Highlight Handling
     Sub cmdCheckHighlight(message As String)
         If Regex.IsMatch(getMessage(message), "\w+: \w+ .+", RegexOptions.IgnoreCase) Then
 #If DEBUG Then
@@ -105,10 +106,11 @@ Module chatStrings
         'Instructions with arguments
         Select Case instruction
             Case "getvar" : cmdGetVar(fromNick, fromChan, arguments)
+            Case "changenick" : cmdChangeNick(fromNick, fromChan, arguments)
         End Select
     End Sub
 
-    'Highlight modules
+    'Highlight Modules
     Sub cmdGetOwner(fromNick As String, fromChan As String)
         'Return owner info if requested
         chanMessage(fromChan, String.Format("{0}: {1} is my owner!", fromNick, owner))
@@ -116,8 +118,8 @@ Module chatStrings
     Sub cmdVersion(fromNick As String, fromChan As String)
         chanMessage(fromChan, String.Format("{0}: I am running version {1} of xeon927's IRC Bot.", fromNick, version))
     End Sub
+    'Owner-Only
     Sub cmdGetVar(fromNick As String, fromChan As String, arguments As String)
-        Console.WriteLine("getVar - {0} {1} {2}", fromNick, fromChan, arguments)
         If fromNick = owner Then
             If InStr(arguments, "settingsFile") Then chanMessage(fromChan, settingsFile)
             If InStr(arguments, "diceMaxRolls") Then chanMessage(fromChan, diceMaxRolls)
@@ -126,6 +128,16 @@ Module chatStrings
             chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
         End If
     End Sub
+    Sub cmdChangeNick(fromNick As String, fromChan As String, arguments As String)
+        If fromNick = owner Then
+            arguments = removeSpaces(arguments)
+            sendData(String.Format("NICK {0}", arguments))
+            nickname = arguments
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
+    End Sub
+
 
     'Brain Modules
     'Owner-Only Functions:
@@ -136,23 +148,6 @@ Module chatStrings
                 sendNotice(owner, String.Format("Goodnight, {0}", owner))
                 sendData("QUIT")
                 End
-            Else
-                chanMessage(getChannel(message), ownerfail)
-            End If
-        End If
-    End Sub
-    Sub cmdChangeNick(message As String)
-        'Change nickname if requested by owner
-        If InStr(message.ToLower(), String.Format("{0}: Changenick", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                Dim nick As String
-                Dim start As Integer
-                start = Len(nickname) + Len(": Changenick ")
-                nick = getMessage(message)
-                nick = nick.Substring(start, Len(getMessage(message)) - start - 1)
-                nick = removeSpaces(nick).ToString()
-                sendData(String.Format("NICK {0}", nick))
-                nickname = nick
             Else
                 chanMessage(getChannel(message), ownerfail)
             End If
