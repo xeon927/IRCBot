@@ -18,14 +18,11 @@ Module chatStrings
                 cmdJoinChan(message)
                 cmdPartChan(message)
                 cmdNickServ(message)
-                cmdGetVar(message)
 
                 'Other Functions
                 cmdDiceRoll(message)
-                'cmdGetOwner(message)
                 cmdGetDose(message)
                 cmdHug(message)
-                cmdVersion(message)
             End If
         Catch ex As Exception
             Console.WriteLine("---Something went wrong (Sub checkString)---")
@@ -81,7 +78,7 @@ Module chatStrings
             nick = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${nickname}")
             inst = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${instruction}")
             arg = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${argument}")
-            cmdRunHighlight(fromNick, fromChan, inst, arg)
+            cmdRunHighlight(fromNick, fromChan, inst.ToLower(), arg)
         End If
         If Regex.IsMatch(getMessage(message), "\w+: \w+", RegexOptions.IgnoreCase) Then
 #If DEBUG Then
@@ -97,14 +94,37 @@ Module chatStrings
         End If
     End Sub
     Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String)
+        'Instructions without arguments
         Select Case instruction
-            Case "ownerinfo" : cmdGetOwner(fromChan)
+            Case "ownerinfo" : cmdGetOwner(fromNick, fromChan)
+            Case "version" : cmdVersion(fromNick, fromChan)
+
         End Select
     End Sub
     Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String, arguments As String)
+        'Instructions with arguments
         Select Case instruction
-
+            Case "getvar" : cmdGetVar(fromNick, fromChan, arguments)
         End Select
+    End Sub
+
+    'Highlight modules
+    Sub cmdGetOwner(fromNick As String, fromChan As String)
+        'Return owner info if requested
+        chanMessage(fromChan, String.Format("{0}: {1} is my owner!", fromNick, owner))
+    End Sub
+    Sub cmdVersion(fromNick As String, fromChan As String)
+        chanMessage(fromChan, String.Format("{0}: I am running version {1} of xeon927's IRC Bot.", fromNick, version))
+    End Sub
+    Sub cmdGetVar(fromNick As String, fromChan As String, arguments As String)
+        Console.WriteLine("getVar - {0} {1} {2}", fromNick, fromChan, arguments)
+        If fromNick = owner Then
+            If InStr(arguments, "settingsFile") Then chanMessage(fromChan, settingsFile)
+            If InStr(arguments, "diceMaxRolls") Then chanMessage(fromChan, diceMaxRolls)
+            If InStr(arguments, "diceMaxSides") Then chanMessage(fromChan, diceMaxSides)
+        Else
+            chanMessage(fromChan, String.Format("{0}: {1}", fromNick, ownerfail))
+        End If
     End Sub
 
     'Brain Modules
@@ -196,22 +216,6 @@ Module chatStrings
             End If
         End If
     End Sub
-    Sub cmdGetVar(message As String)
-        If InStr(message.ToLower(), String.Format("{0}: getVar", nickname).ToLower()) Then
-            If getNickname(message) = owner Then
-                Dim var As String
-                Dim start As Integer
-                start = Len(nickname) + Len(": getVar ")
-                var = getMessage(message)
-                var = var.Substring(start, Len(getMessage(message)) - start - 1)
-                Select Case var.ToString()
-                    Case "settingsFile" : chanMessage(getChannel(message), settingsFile)
-                    Case "diceMaxRolls" : chanMessage(getChannel(message), diceMaxRolls)
-                    Case "diceMaxSides" : chanMessage(getChannel(message), diceMaxSides)
-                End Select
-            End If
-        End If
-    End Sub
     'Other Functions:
     Sub cmdDiceRoll(message As String)
         If CanRegex Then
@@ -259,13 +263,6 @@ Module chatStrings
             End If
         End If
     End Sub
-    Sub cmdGetOwner(fromChan As String)
-        'Return owner info if requested
-        chanMessage(fromChan, String.Format("{0} is my owner!", owner))
-        'If InStr(message.ToLower(), String.Format("{0}: Ownerinfo", nickname).ToLower()) Then
-        '    chanMessage(getChannel(message), String.Format("{0} is my owner!", owner))
-        'End If
-    End Sub
     Sub cmdGetDose(message As String)
         If CanRegex Then
             If Regex.IsMatch(getMessage(message), "!dose \d+ \d+", RegexOptions.IgnoreCase) Then
@@ -292,11 +289,6 @@ Module chatStrings
             Else
                 chanMessage(getChannel(message), String.Format("{0}: Aww... :)", getNickname(message)))
             End If
-        End If
-    End Sub
-    Sub cmdVersion(message As String)
-        If InStr(message.ToLower(), String.Format("{0}: Version", nickname).ToLower()) Then
-            chanMessage(getChannel(message), String.Format("I am running version {0} of xeon927's IRC Bot", version))
         End If
     End Sub
 End Module
