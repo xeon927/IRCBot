@@ -5,7 +5,7 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
-    Public version As String = "1.5.0"
+    Public version As String = "1.5.1"
     Public host, port, channel, nickname, username, realname, owner, ownerfail, nsPass As String
     Public settingsFile As String = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml")
     Dim client As TcpClient
@@ -138,7 +138,6 @@ Module main
     Sub runLoop()
         Dim stream As NetworkStream = client.GetStream()
         Dim responseData As [String] = [String].Empty
-        stream.ReadTimeout = 1000
         Do
             Dim data As Byte()
             data = New [Byte](0) {}
