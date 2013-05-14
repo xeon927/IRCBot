@@ -5,7 +5,7 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
-    Public version As String = "1.7.0"
+    Public version As String = "1.7.1"
     Public settingsFile As String = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml")
     Dim client As TcpClient
     Dim ReadBuf As String = ""
