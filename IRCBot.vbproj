@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="chatStrings.vb" />
+    <Compile Include="help.vb" />
     <Compile Include="main.vb" />
     <Compile Include="Settings\AssemblyInfo.vb" />
     <Compile Include="Settings\Application.Designer.vb">

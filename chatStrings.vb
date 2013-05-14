@@ -75,6 +75,7 @@ Module chatStrings
             inst = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${instruction}")
             arg = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${argument}")
             cmdRunHighlight(fromNick, fromChan, inst.ToLower(), arg)
+            Exit Sub
         End If
         If Regex.IsMatch(getMessage(message), "\w+: \w+", RegexOptions.IgnoreCase) Then
 #If DEBUG Then
@@ -87,6 +88,7 @@ Module chatStrings
             nick = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${nickname}")
             inst = Regex.Match(getMessage(message), pattern, RegexOptions.IgnoreCase).Result("${instruction}")
             cmdRunHighlight(fromNick, fromChan, inst.ToLower())
+            Exit Sub
         End If
     End Sub
     Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String)
@@ -95,6 +97,7 @@ Module chatStrings
             Case "ownerinfo" : cmdGetOwner(fromNick, fromChan)
             Case "version" : cmdVersion(fromNick, fromChan)
             Case "identify" : cmdNickServ(fromNick, fromChan)
+            Case "help" : cmdHelp(fromNick, fromChan)
         End Select
     End Sub
     Sub cmdRunHighlight(fromNick As String, fromChan As String, instruction As String, arguments As String)
@@ -105,7 +108,7 @@ Module chatStrings
             Case "changeowner" : cmdChangeOwner(fromNick, fromChan, arguments)
             Case "joinchan" : cmdJoinChan(fromNick, fromChan, arguments)
             Case "partchan" : cmdPartChan(fromNick, fromChan, arguments)
-
+            Case "help" : cmdHelp(fromNick, fromChan, arguments)
         End Select
     End Sub
 
@@ -117,6 +120,13 @@ Module chatStrings
     Sub cmdVersion(fromNick As String, fromChan As String)
         chanMessage(fromChan, String.Format("{0}: I am running version {1} of xeon927's IRC Bot.", fromNick, version))
     End Sub
+    Sub cmdHelp(fromNick As String, fromChan As String, arguments As String)
+        help.getHelp(fromNick, fromChan, arguments)
+    End Sub
+    Sub cmdHelp(fromNick As String, fromChan As String)
+        help.showHelp(fromNick, fromChan)
+    End Sub
+
     'Owner-Only
     Sub cmdNickServ(fromNick As String, fromChan As String)
         If fromNick = owner Then

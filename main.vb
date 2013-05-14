@@ -5,7 +5,7 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
-    Public version As String = "1.6.0"
+    Public version As String = "1.7.0"
     Public settingsFile As String = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml")
     Dim client As TcpClient
     Dim ReadBuf As String = ""
@@ -161,10 +161,9 @@ Module main
 
                 If loggedIn = False Then doLogin()
             Catch ex As Exception
-                'The following lines have been removed due to unnecessary spam. Sure, it might be needed, but probably not.
-                'Every time the server doesn't send anything, the connection times out, and an error is thrown. Just about every 10 seconds.
-                'Console.WriteLine("---No response from server---")
-                'Console.WriteLine(ex.ToString())
+#If DEBUG Then
+                Console.WriteLine(ex.ToString())
+#End If
             End Try
         Loop
     End Sub
@@ -215,7 +214,10 @@ Module main
 
     'Extended Server Sends
     Sub sendNotice(user As String, message As String)
-        sendData(String.Format("NOTICE {0} {1}", user, message))
+        sendData(String.Format("NOTICE {0} :{1}", user, message))
+    End Sub
+    Sub sendPM(user As String, message As String)
+        sendData(String.Format("PRIVMSG {0} :{1}", user, message))
     End Sub
     Sub sendNickServ()
         sendData(String.Format("PRIVMSG NickServ IDENTIFY {0}", nsPass))
