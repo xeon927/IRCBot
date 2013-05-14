@@ -1,6 +1,6 @@
 ﻿Imports System.IO
 Imports System.Xml
-Module WriteSampleConfig
+Module config
     Sub Write()
         Dim defaultConfig As New XDocument(
             New XElement("settings",
@@ -23,6 +23,30 @@ Module WriteSampleConfig
                                       New XElement("diceMaxRolls", "75"),
                                       New XElement("diceMaxSides", "500"))))
         defaultConfig.Save(main.settingsFile)
+    End Sub
+    Sub WriteMod()
+        If File.Exists(main.settingsFile) Then File.Delete(main.settingsFile)
+        Dim modConfig As New XDocument(
+            New XElement("settings",
+                        New XElement("server",
+                                    New XElement("host", host),
+                                    New XElement("port", port),
+                                    New XElement("channel", channel)),
+                        New XElement("bot",
+                                      New XElement("nickname", nickname),
+                                    New XElement("username", username),
+                                    New XElement("realname", realname),
+                                    New XElement("owner", owner)),
+                        New XElement("nickserv",
+                                    New XElement("useNickServ", nsUse.ToString()),
+                                    New XElement("password", nsPass)),
+                        New XElement("misc",
+                                    New XElement("ownerfail", ownerfail),
+                                    New XElement("alwaysQuiet", QuietStart.ToString())),
+                        New XElement("diceroll",
+                                    New XElement("diceMaxRolls", diceMaxRolls),
+                                    New XElement("diceMaxSides", diceMaxSides))))
+        modConfig.Save(main.settingsFile)
     End Sub
     Sub genNew()
         If File.Exists(main.settingsFile) Then File.Delete(main.settingsFile)

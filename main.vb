@@ -5,16 +5,17 @@ Imports System.Text.Encoding 'ASCII.GetString + ASCII.GetBytes
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Module main
-    Public version As String = "1.5.1"
-    Public host, port, channel, nickname, username, realname, owner, ownerfail, nsPass As String
+    Public version As String = "1.6.0"
     Public settingsFile As String = Path.Combine(Directory.GetCurrentDirectory(), "settings.xml")
     Dim client As TcpClient
-    'Dim data As [Byte]()
     Dim ReadBuf As String = ""
     Public CanRegex As Boolean = False
-    Dim QuietStart As Boolean = False
-    Dim nsUse As Boolean = False
     Dim gen As New Random
+
+    'Settings from XML
+    Public host, port, channel, nickname, username, realname, owner, ownerfail, nsPass As String
+    Public QuietStart As Boolean = False
+    Public nsUse As Boolean = False
     Public loggedIn As Boolean = False
     Public firstPing As Boolean = False
     Public nickSent As Boolean = False
@@ -30,7 +31,7 @@ Module main
     End Sub
     Sub XMLLoad()
         If Not File.Exists(settingsFile) Then
-            WriteSampleConfig.Write()
+            config.Write()
         End If
 
         Dim xmlDoc = XDocument.Load(settingsFile)
@@ -70,7 +71,8 @@ Module main
             If s.ToLower = "/help" Then DisplayFlags()
             If s.ToLower = "/?" Then DisplayFlags()
             If s.ToLower = "/quiet" Then QuietStart = True
-            If s.ToLower = "/gencfg" Then WriteSampleConfig.genNew()
+            If s.ToLower = "/gencfg" Then config.genNew()
+            If s.ToLower = "/setup" Then setup.runSetup()
         Next
     End Sub
     Sub DisplayFlags()

@@ -103,7 +103,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="WriteSampleConfig.vb" />
+    <Compile Include="setup.vb" />
+    <Compile Include="config.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Settings\Resources.resx">
