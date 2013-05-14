@@ -51,7 +51,7 @@
     End Sub
     Sub help_DiceRoll(fromNick As String)
         sendPM(fromNick, "DiceRoll - Rolls dice and produces results")
-        sendPM(fromNick, String.Format("Usage: ""<num1>d<num2>"" (Where <num1> = A number of choosing, up to {0} / <num2> = A number of choosing, up to {1}", main.diceMaxRolls, main.diceMaxSides))
+        sendPM(fromNick, String.Format("Usage: ""!<num1>d<num2>"" (Where <num1> = A number of choosing, up to {0} / <num2> = A number of choosing, up to {1}", main.diceMaxRolls, main.diceMaxSides))
         sendPM(fromNick, "Useful for Role-Playing or other times when you need to decide something based on the rolling of dice.")
     End Sub
     Sub help_Hug(fromNick As String)

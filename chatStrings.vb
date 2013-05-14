@@ -195,12 +195,12 @@ Module chatStrings
     'Other Functions:
     Sub cmdDiceRoll(message As String)
         If CanRegex Then
-            If Regex.IsMatch(getMessage(message), "\d+d\d+", RegexOptions.IgnoreCase) Then
+            If Regex.IsMatch(getMessage(message), "!\d+d\d+", RegexOptions.IgnoreCase) Then
 #If DEBUG Then
                 Console.WriteLine("---Found Diceroll Match---")
 #End If
-                Dim rolls As Integer = Regex.Match(getMessage(message), "(?<rolls>\d+)d(?<max>\d+)", RegexOptions.IgnoreCase).Result("${rolls}")
-                Dim max As Integer = Regex.Match(getMessage(message), "(?<rolls>\d+)d(?<max>\d+)", RegexOptions.IgnoreCase).Result("${max}")
+                Dim rolls As Integer = Regex.Match(getMessage(message), "!(?<rolls>\d+)d(?<max>\d+)", RegexOptions.IgnoreCase).Result("${rolls}")
+                Dim max As Integer = Regex.Match(getMessage(message), "!(?<rolls>\d+)d(?<max>\d+)", RegexOptions.IgnoreCase).Result("${max}")
                 Dim resultArray(rolls - 1) As String
 #If DEBUG Then
                 Console.WriteLine("Checking number limits")
