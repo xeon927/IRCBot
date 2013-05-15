@@ -251,7 +251,7 @@ Module chatStrings
     Sub cmdHug(message As String)
         If InStr(message, String.Format("hugs {0}", nickname)) Then
             If getNickname(message) = owner Then
-                Select Case numberGen(0, 3)
+                Select Case numberGen(1, 3)
                     Case 1
                         chanMessage(getChannel(message), String.Format("{1}ACTION snuggles up to {0}{1}", getNickname(message), Chr(&H1)))
                     Case 2
