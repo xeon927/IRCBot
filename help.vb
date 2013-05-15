@@ -5,7 +5,7 @@
         Else
             'TODO: Sort this crap into alphabetical order
             sendPM(fromNick, "Please specify an item for help to be provided.")
-            sendPM(fromNick, String.Format("(USAGE: ""{0}: HELP ITEM"", where ITEM is the item you wish to get help for", main.nickname))
+            sendPM(fromNick, String.Format("(USAGE: ""{0}: HELP ITEM"", where ITEM is the item you wish to get help for)", main.nickname))
             sendPM(fromNick, "I support the following items:")
             sendPM(fromNick, "  OWNERINFO")
             sendPM(fromNick, "  VERSION")
