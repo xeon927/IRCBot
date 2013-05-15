@@ -43,11 +43,11 @@
     'TODO: Sort this crap into alphabetical order
     Sub help_OwnerInfo(fromNick As String)
         sendPM(fromNick, "OwnerInfo - Gets owner information")
-        sendPM(fromNick, String.Format("Usage: ""{0}: OwnerInfo"""))
+        sendPM(fromNick, String.Format("Usage: ""{0}: OwnerInfo""", main.nickname))
     End Sub
     Sub help_Version(fromNick As String)
         sendPM(fromNick, "Version - Gets IRC Bot version information")
-        sendPM(fromNick, String.Format("Usage: ""{0}: Version"""))
+        sendPM(fromNick, String.Format("Usage: ""{0}: Version""", main.nickname))
     End Sub
     Sub help_DiceRoll(fromNick As String)
         sendPM(fromNick, "DiceRoll - Rolls dice and produces results")
