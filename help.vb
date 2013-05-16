@@ -25,7 +25,7 @@
         End If
     End Sub
     Sub getHelp(fromNick As String, fromChan As String, arguments As String)
-        Select Case arguments
+        Select Case arguments.ToLower()
             Case "ownerinfo" : help_OwnerInfo(fromNick)
             Case "version" : help_Version(fromNick)
             Case "diceroll" : help_DiceRoll(fromNick)
