@@ -18,6 +18,7 @@ Module chatStrings
                 cmdDiceRoll(message)
                 cmdGetDose(message)
                 cmdHug(message)
+                cmdEightBall(message)
             End If
         Catch ex As Exception
             Console.WriteLine("---Something went wrong (Sub checkString)---")
@@ -265,6 +266,32 @@ Module chatStrings
             Else
                 chanMessage(getChannel(message), String.Format("{0}: Aww... :)", getNickname(message)))
             End If
+        End If
+    End Sub
+    Sub cmdEightBall(message As String)
+        If InStr(message, "!8b") Or InStr(message, "!8ball") Then
+            Select Case numberGen(1, 20)
+                Case 1 : chanMessage(getChannel(message), String.Format("{0}: It is certain.", getNickname(message)))
+                Case 2 : chanMessage(getChannel(message), String.Format("{0}: It is decidedly so.", getNickname(message)))
+                Case 3 : chanMessage(getChannel(message), String.Format("{0}: Without a doubt.", getNickname(message)))
+                Case 4 : chanMessage(getChannel(message), String.Format("{0}: Yes, definitely.", getNickname(message)))
+                Case 5 : chanMessage(getChannel(message), String.Format("{0}: You may rely on it.", getNickname(message)))
+                Case 6 : chanMessage(getChannel(message), String.Format("{0}: As I see it, yes.", getNickname(message)))
+                Case 7 : chanMessage(getChannel(message), String.Format("{0}: Most likely.", getNickname(message)))
+                Case 8 : chanMessage(getChannel(message), String.Format("{0}: Outlook good.", getNickname(message)))
+                Case 9 : chanMessage(getChannel(message), String.Format("{0}: Yes.", getNickname(message)))
+                Case 10 : chanMessage(getChannel(message), String.Format("{0}: Signs point to yes.", getNickname(message)))
+                Case 11 : chanMessage(getChannel(message), String.Format("{0}: Reply hazy. Try again.", getNickname(message)))
+                Case 12 : chanMessage(getChannel(message), String.Format("{0}: Ask again later.", getNickname(message)))
+                Case 13 : chanMessage(getChannel(message), String.Format("{0}: Better not tell you now.", getNickname(message)))
+                Case 14 : chanMessage(getChannel(message), String.Format("{0}: Cannot predict now.", getNickname(message)))
+                Case 15 : chanMessage(getChannel(message), String.Format("{0}: Concentrate and ask again.", getNickname(message)))
+                Case 16 : chanMessage(getChannel(message), String.Format("{0}: Don't count on it.", getNickname(message)))
+                Case 17 : chanMessage(getChannel(message), String.Format("{0}: My reply is no.", getNickname(message)))
+                Case 18 : chanMessage(getChannel(message), String.Format("{0}: My sources say no.", getNickname(message)))
+                Case 19 : chanMessage(getChannel(message), String.Format("{0}: Outlook not so good.", getNickname(message)))
+                Case 20 : chanMessage(getChannel(message), String.Format("{0}: Very doubtful.", getNickname(message)))
+            End Select
         End If
     End Sub
 End Module
